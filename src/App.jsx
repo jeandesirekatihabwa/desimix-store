@@ -1,6 +1,8 @@
+// src/App.jsx
 import { products } from "./data/products";
 import ProductCard from "./components/ProductCard";
 import CartDrawer from "./components/CartDrawer";
+import ProductDetailsModal from "./components/ProductDetailsModal";
 import { useCartStore } from "./store/cartStore";
 
 export default function App() {
@@ -34,8 +36,8 @@ export default function App() {
         </h2>
 
         <p className="mt-6 text-muted max-w-2xl mx-auto text-lg">
-          Premium drum kits and melodies trusted by producers worldwide.
-          Instant download. Royalty-free. Industry-ready.
+          Premium drum kits and melodies trusted by producers worldwide. Instant
+          download. Royalty-free. Industry-ready.
         </p>
 
         <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
@@ -52,13 +54,8 @@ export default function App() {
       </section>
 
       {/* Products */}
-      <section
-        id="packs"
-        className="max-w-7xl mx-auto px-6 pb-24"
-      >
-        <h3 className="text-3xl font-bold mb-12 text-center">
-          Featured Packs
-        </h3>
+      <section id="packs" className="max-w-7xl mx-auto px-6 pb-24">
+        <h3 className="text-3xl font-bold mb-12 text-center">Featured Packs</h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((p) => (
@@ -76,12 +73,14 @@ export default function App() {
               Built for FL Studio, Ableton, Logic & more.
             </p>
           </div>
+
           <div>
             <h4 className="font-bold text-lg">Royalty-Free</h4>
             <p className="text-muted text-sm mt-2">
               Use in commercial releases with no restrictions.
             </p>
           </div>
+
           <div>
             <h4 className="font-bold text-lg">Instant Access</h4>
             <p className="text-muted text-sm mt-2">
@@ -96,14 +95,14 @@ export default function App() {
         <p className="font-bold text-white tracking-wide">
           DES<span className="text-primary">IMIX</span>
         </p>
-        <p className="mt-2">
-          Professional Afrobeat sounds for modern producers.
-        </p>
+        <p className="mt-2">Professional Afrobeat sounds for modern producers.</p>
         <p className="mt-4 text-xs">
           © {new Date().getFullYear()} DESIMIX · All Rights Reserved
         </p>
       </footer>
 
+      {/* Overlays */}
+      <ProductDetailsModal />
       <CartDrawer />
     </div>
   );

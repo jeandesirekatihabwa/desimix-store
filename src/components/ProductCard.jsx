@@ -1,74 +1,98 @@
 import { useCartStore } from "../store/cartStore";
+import AudioPreview from "./AudioPreview";
 
 export default function ProductCard({ product }) {
-  const addToCart = useCartStore((s) => s.addToCart);
+  const openProduct = useCartStore((s) => s.openProduct);
 
   return (
-    <div className="bg-card rounded-2xl p-6 shadow-xl hover:scale-[1.02] hover:shadow-primary/15 transition">
-      <h3 className="text-lg font-bold">{product.title}</h3>
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => openProduct(product)}
+      onKeyDown={(e) => e.key === "Enter" && openProduct(product)}
+      className={[
+        "group relative bg-card rounded-2xl p-3",
+        "border border-white/10 shadow-card",
+        "transition-all duration-1 ease-out",
+        "hover:-translate-y-1 hover:scale-[1.08] hover:shadow-glow",
+        "cursor-pointer outline-none",
+        "focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0",
+      ].join(" ")}
+      aria-label={`Open details for ${product.title}`}
+      title="Click to view pack details"
+    >
+      {/* Premium shine sweep (hover) */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
+        <div className="absolute -left-1/2 top-0 h-full w-1/2 rotate-12 bg-white/10 blur-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-30" />
+        <div className="absolute -left-1/2 top-0 h-full w-1/2 rotate-12 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-120%] group-hover:translate-x-[240%] transition-transform duration-700 ease-out" />
+      </div>
 
-      <p className="text-sm text-muted mt-2">
-        {product.description}
-      </p>
+      {/* Image */}
+      <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black/20">
+        {/* subtle “4K” overlay */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+        <div className="pointer-events-none absolute -inset-24 opacity-20 blur-3xl bg-primary/20" />
 
-      {/* Meta */}
-      {Array.isArray(product.meta) && (
-        <ul className="mt-4 text-xs text-muted space-y-1">
-          {product.meta.map((m, i) => (
-            <li key={i}>• {m}</li>
-          ))}
-        </ul>
-      )}
+        <img
+          src={product.image}
+          alt={product.title}
+          className="w-full h-48 object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+          loading="lazy"
+        />
 
-      {/* ✅ Premium Preview Area (UI now, audio later) */}
-      <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-primary/20 border border-primary/30 text-primary font-bold flex items-center justify-center">
-              ▶
-            </div>
-
-            <div className="leading-tight">
-              <p className="text-sm font-semibold">
-                Audio Preview
-                <span className="ml-2 text-xs text-muted">(coming soon)</span>
-              </p>
-              <p className="text-xs text-muted">0:00 / 0:30</p>
-            </div>
-          </div>
-
-          <span className="text-[11px] px-3 py-1 rounded-full bg-white/5 border border-white/10 text-muted">
-            Preview
-          </span>
-        </div>
-
-        <div className="mt-3">
-          <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-            <div className="h-full w-1/3 bg-primary opacity-70" />
-          </div>
-
-          <button
-            type="button"
-            className="mt-3 w-full bg-white/5 hover:bg-white/10 transition border border-white/10 rounded-xl py-2 text-sm text-muted"
-          >
-            Add preview audio later
-          </button>
+        {/* Price badge */}
+        <div className="absolute top-3 right-3 rounded-full border border-white/10 bg-black/40 backdrop-blur px-3 py-1">
+          <span className="text-xs font-black text-white">€{product.price}</span>
+          <span className="ml-1 text-[10px] text-muted">one-time</span>
         </div>
       </div>
 
-      {/* Price + CTA */}
-      <div className="mt-6 flex justify-between items-center">
-        <span className="text-primary text-xl font-extrabold">
-          €{product.price}
-        </span>
+      {/* Title + Tagline */}
+      <div className="mt-4">
+        <h3 className="text-lg font-extrabold tracking-tight leading-snug">
+          {product.title}
+        </h3>
 
-        <button
-          type="button"
-          onClick={() => addToCart(product)}
-          className="bg-primary text-black px-5 py-2 rounded-full font-semibold hover:brightness-110"
-        >
-          Add to Cart
-        </button>
+        {product.tagline && (
+          <p className="text-xs text-muted mt-1 line-clamp-2">
+            {product.tagline}
+          </p>
+        )}
+      </div>
+
+      {/* Optional meta chips (first 3 only to keep UI clean) */}
+      {Array.isArray(product.meta) && product.meta.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {product.meta.slice(0, 3).map((m, idx) => (
+            <span
+              key={idx}
+              className="text-[11px] px-3 py-1 rounded-full bg-white/5 border border-white/10 text-muted"
+            >
+              {m}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Preview (clicking preview should NOT open modal) */}
+      <div
+        className="mt-3"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+        role="presentation"
+      >
+        <AudioPreview src={product.preview} trackId={product.id} />
+      </div>
+
+      {/* CTA hint */}
+      <div className="mt-3 flex items-center justify-between">
+        <p className="text-[11px] text-muted">
+          Click to open full details
+        </p>
+
+        <span className="text-[11px] text-primary font-bold opacity-80 group-hover:opacity-100 transition">
+          Details →
+        </span>
       </div>
     </div>
   );

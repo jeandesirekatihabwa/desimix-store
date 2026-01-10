@@ -65,13 +65,11 @@ export default function AudioPreview({ src, trackId }) {
     if (!audio) return;
 
     if (!isPlaying) {
-      // announce globally so other players stop
       setPlayingId(trackId);
       try {
         await audio.play();
         setIsPlaying(true);
       } catch {
-        // autoplay restrictions / user gesture issues
         setIsPlaying(false);
       }
     } else {
@@ -115,10 +113,7 @@ export default function AudioPreview({ src, trackId }) {
 
           <div className="leading-tight">
             <p className="text-sm font-semibold">
-              Audio Preview
-              <span className="ml-2 text-xs text-muted">
-                (30–60s)
-              </span>
+              Audio Preview <span className="ml-2 text-xs text-muted">(30–60s)</span>
             </p>
             <p className="text-xs text-muted">
               {formatTime(t)} / {formatTime(duration)}
@@ -146,13 +141,17 @@ export default function AudioPreview({ src, trackId }) {
         </div>
 
         <input
-          className="mt-2 w-full accent-[var(--tw-prose-links)]"
+          className="mt-2 w-full accent-primary"
           type="range"
           min="0"
           max="100"
           value={Number.isFinite(progress) ? progress : 0}
           onChange={onSeek}
         />
+
+        <p className="text-[10px] text-muted mt-2">
+          Preview only · Full quality after purchase
+        </p>
       </div>
 
       <audio ref={audioRef} src={src} preload="metadata" />
